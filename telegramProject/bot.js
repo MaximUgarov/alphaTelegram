@@ -39,30 +39,7 @@ const getChatifcms = async () => {
     return response.data[0].chatID
 }
 
-// function FindCard(callback) {
 
-//     axios.get(`${API_URL}/projects`, {
-//             params: {
-//                 botToken: tokenBot
-//             }
-//         })
-//         .then(function (res) {
-//             callback(res.data[0].chatID);
-//         })
-//         .catch(function (error) {
-//             console.log(error);
-//         });
-// }
-
-// let xui = axios({
-//     method: 'get',
-//     url: `${API_URL}/projects`,
-//     params: {
-//         botToken: tokenBot
-//     }
-// }).then((res) => {
-//     return res.data[0].chatID
-// })
 
 const QIWISettings = {
     amount: null, // Сумма, пока оставим null
@@ -74,7 +51,10 @@ const QIWISettings = {
 
 let dateSubcribe = ""
 let rateName = ""
-bot.telegram.setWebhook(`https://codovstvo.ru/helloapi/${process.argv[4]}`)
+
+
+bot.telegram.setWebhook(`https://codovstvo.ru/helloapi/${10000 + Number(process.argv[4])}`)
+bot.startWebhook(`/helloapi/${10000 + Number(process.argv[4])}`, null, 5000)
 
 const server = express();
 
@@ -86,18 +66,21 @@ server.use(bodyParser.urlencoded({
     extended: true
 }))
 server.listen(10000 + Number(process.argv[4]), err => {
+    console.log(err)
     if (err) {
         throw err;
     }
     console.log(`Bot has been start`)
 })
 
-server.post('/bot', ctx => {
+server.post(`/${10000 + Number(process.argv[4])}`, ctx => {
     const {
         body
     } = ctx.request
     bot.proccessUpdate(body)
     ctx.status = 200
+}).catch(err => {
+    console.log(err)
 })
 
 
@@ -309,7 +292,6 @@ bot.on(`callback_query`, async ctx => {
 // bot.use(session());
 // bot.use(stage.middleware());
 
-bot.launch();
 
 
 console.log('Бот запущен');

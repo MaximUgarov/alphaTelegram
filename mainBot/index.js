@@ -1,12 +1,10 @@
 const {
     Telegraf,
-    Scenes,
     session,
     Markup,
     Stage
 } = require('telegraf');
 const QiwiBillPaymentsAPI = require('@qiwi/bill-payments-node-js-sdk');
-const fs = require('fs');
 const axios = require('axios');
 const express = require('express');
 const bodyParser = require('body-parser')
@@ -14,13 +12,16 @@ const {
     BOT_TOKEN,
     API_URL
 } = require('./config');
-const WizardScene = require('telegraf/scenes/wizard');
+
 const {
     enter,
     leave
 } = Stage;
 const bot = new Telegraf(BOT_TOKEN);
+
 bot.telegram.setWebhook(`https://codovstvo.ru/mainbot`)
+bot.startWebhook(`/mainbot`, null, 5000)
+
 const server = express();
 const Scene = require('telegraf/scenes/base')
 const {
@@ -33,6 +34,7 @@ server.use(bodyParser.json({
 server.use(bodyParser.urlencoded({
     extended: true
 }))
+
 server.listen(10055, err => {
     if (err) {
         throw err;
@@ -51,7 +53,7 @@ bot.hears('Отменить Создание проекта', async ctx => {
     )
 })
 
-server.post('/bot', ctx => {
+server.post('/mainbot', ctx => {
     const {
         body
     } = ctx.request
@@ -772,6 +774,7 @@ sceneProjects1.enter((ctx) => {
         console.log(err)
     })
 })
+
 sceneProjects1.on(`callback_query`, ctx => {
     ctx.scene.enter("sceneProjects2", {
         id: ctx.update.callback_query.data
@@ -907,7 +910,7 @@ bot.hears('d9fbfb975fb89c5b07ac13d99cc50d8b', async ctx => {
     })
 })
 
-bot.launch();
+
 
 
 console.log('bot has been started')
