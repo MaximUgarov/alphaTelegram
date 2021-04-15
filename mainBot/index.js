@@ -17,12 +17,37 @@ const {
     enter,
     leave
 } = Stage;
-const bot = new Telegraf(BOT_TOKEN);
-
-bot.telegram.setWebhook(`https://codovstvo.ru/mainbot`)
-bot.startWebhook(`/mainbot`, null, 5000)
 
 const server = express();
+const bot = new Telegraf(BOT_TOKEN);
+
+
+server.use(bot.webhookCallback('/mainbot'))
+bot.telegram.setWebhook('https://codovstvo.ru/mainbot').then(res => {
+    console.log(res)
+}).catch(err =>{
+    console.log(err)
+})
+
+server.get('/', (req, res) => res.send('Hello World!'))
+
+server.use(bot.webhookCallback('/mainbot'))
+
+server.listen(10055, err => {
+    if (err) {
+        throw err;
+    }
+    console.log(`Bot has been start`)
+})
+
+// server.post('/mainbot', ctx => {
+//     const {
+//         body
+//     } = ctx.request
+//     bot.proccessUpdate(body)
+//     ctx.status = 200
+// })
+
 const Scene = require('telegraf/scenes/base')
 const {
     exec
@@ -35,13 +60,6 @@ server.use(bodyParser.urlencoded({
     extended: true
 }))
 
-server.listen(10055, err => {
-    if (err) {
-        throw err;
-    }
-    console.log(`Bot has been start`)
-})
-
 
 bot.hears('Отменить Создание проекта', async ctx => {
     ctx.reply(`Создание отменено`,
@@ -53,13 +71,7 @@ bot.hears('Отменить Создание проекта', async ctx => {
     )
 })
 
-server.post('/mainbot', ctx => {
-    const {
-        body
-    } = ctx.request
-    bot.proccessUpdate(body)
-    ctx.status = 200
-})
+
 
 server.post('/createpay', (req, res) => {
     bot.telegram.callApi('createChatInviteLink', req.query).then(data => {
