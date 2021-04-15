@@ -20,18 +20,24 @@ const {
 
 const server = express();
 const bot = new Telegraf(BOT_TOKEN);
+server.use(bodyParser.json());
+server.use(bodyParser.json({
+    type: 'application/vnd.api+json'
+}));
+server.use(bodyParser.urlencoded({
+    extended: true
+}))
 
 
-server.use(bot.webhookCallback('/mainbot'))
-bot.telegram.setWebhook('https://codovstvo.ru/mainbot').then(res => {
+bot.telegram.setWebhook('https://ff90939df19b.ngrok.io/mainbot').then(res => {
     console.log(res)
-}).catch(err =>{
+}).catch(err => {
     console.log(err)
 })
 
 server.get('/', (req, res) => res.send('Hello World!'))
 
-server.use(bot.webhookCallback('/mainbot'))
+
 
 server.listen(10055, err => {
     if (err) {
@@ -40,25 +46,17 @@ server.listen(10055, err => {
     console.log(`Bot has been start`)
 })
 
-// server.post('/mainbot', ctx => {
-//     const {
-//         body
-//     } = ctx.request
-//     bot.proccessUpdate(body)
-//     ctx.status = 200
-// })
+server.post('/mainbot', (req, res) => {
+     return bot.handleUpdate(req.body, res)
+})
+
+//
 
 const Scene = require('telegraf/scenes/base')
 const {
     exec
 } = require("child_process");
-server.use(bodyParser.json());
-server.use(bodyParser.json({
-    type: 'application/vnd.api+json'
-}));
-server.use(bodyParser.urlencoded({
-    extended: true
-}))
+
 
 
 bot.hears('Отменить Создание проекта', async ctx => {
